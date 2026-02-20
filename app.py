@@ -2,27 +2,28 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-# Load model
-model = joblib.load("aqi_model.pkl")
+model = joblib.load("water_quality_model.pkl")
 encoder = joblib.load("label_encoder.pkl")
 
-st.title("Air Quality Prediction System")
-st.write("Enter air pollution values to predict AQI category")
+st.title("Water Quality Prediction")
 
-# User inputs
-pm25 = st.number_input("PM2.5 (µg/m³)", 0.0, 500.0)
-pm10 = st.number_input("PM10 (µg/m³)", 0.0, 500.0)
-co2 = st.number_input("CO₂ (ppm)", 300.0, 2000.0)
+pH = st.number_input("pH")
+turbidity = st.number_input("Turbidity")
+do = st.number_input("Dissolved Oxygen")
+cond = st.number_input("Conductivity")
+temp = st.number_input("Temperature")
+tds = st.number_input("TDS")
 
-if st.button("Predict AQI"):
-    
-    input_data = pd.DataFrame({
-        "PM25_sensor": [pm25],
-        "PM10_sensor": [pm10],
-        "CO2_sensor": [co2]
-    })
+if st.button("Predict"):
+    data = pd.DataFrame([{
+        "pH": pH,
+        "Turbidity": turbidity,
+        "Dissolved_Oxygen": do,
+        "Conductivity": cond,
+        "Temperature": temp,
+        "TDS": tds
+    }])
 
-    prediction = model.predict(input_data)
-    label = encoder.inverse_transform(prediction)
-
-    st.success(f"Predicted AQI Category: {label[0]}")
+    pred = model.predict(data)
+    label = encoder.inverse_transform(pred)
+    st.success(f"Water Quality: {label[0]}")
